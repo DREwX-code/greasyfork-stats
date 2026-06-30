@@ -1,0 +1,22 @@
+{
+  "name": "greasyfork-stats",
+  "version": "0.1.0",
+  "description": "Dynamic GreasyFork statistics cards for your online profiles.",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "keywords": [
+    "greasyfork",
+    "stats",
+    "readme",
+    "svg",
+    "vercel",
+    "userscripts"
+  ],
+  "author": "Andrew (Dℝ∃wX)",
+  "license": "MIT",
+  "devDependencies": {
+    "vercel": "latest"
+  }
+}
