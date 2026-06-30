@@ -2,24 +2,28 @@
 
 Dynamic GreasyFork statistics cards for your online profiles.
 
-Generate customizable SVG cards from your public GreasyFork stats and embed them in your GitHub README, project pages, documentation, or anywhere SVG images are supported.
+Generate customizable SVG cards from your public GreasyFork stats and embed them in GitHub READMEs, project pages, documentation, or anywhere SVG images are supported.
 
 ## Preview
 
-```html
-<img src="https://greasyfork-stats.vercel.app/api?user=1259433&theme=github_dark" alt="GreasyFork Stats">
-```
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=1259433&theme=github_dark&lang=en)
 
 ## Usage
 
 ```md
-![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=1259433)
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID)
+```
+
+With options:
+
+```md
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID&theme=github_dark&lang=en)
 ```
 
 Or with HTML:
 
 ```html
-<img src="https://greasyfork-stats.vercel.app/api?user=1259433&theme=github_dark&lang=en" alt="GreasyFork Stats">
+<img src="https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID&theme=github_dark&lang=en" alt="GreasyFork Stats">
 ```
 
 ## Parameters
@@ -48,7 +52,7 @@ dracula
 Example:
 
 ```md
-![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=1259433&theme=tokyonight)
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID&theme=tokyonight)
 ```
 
 ## Languages
@@ -65,7 +69,7 @@ de
 Example:
 
 ```md
-![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=1259433&lang=fr)
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID&lang=fr)
 ```
 
 ## Roadmap
