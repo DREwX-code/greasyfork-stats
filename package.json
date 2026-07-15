@@ -1,7 +1,8 @@
 {
   "name": "greasyfork-stats",
   "version": "0.1.0",
-  "description": "Dynamic GreasyFork statistics cards for your online profiles.",
+  "private": true,
+  "description": "Dynamic GreasyFork statistics cards for GitHub READMEs and online profiles.",
   "type": "module",
   "scripts": {
     "dev": "vercel dev"
@@ -9,14 +10,16 @@
   "keywords": [
     "greasyfork",
     "stats",
-    "readme",
     "svg",
+    "readme-card",
+    "github-readme",
+    "userscripts",
     "vercel",
-    "userscripts"
+    "serverless"
   ],
   "author": "Andrew (Dℝ∃wX)",
   "license": "MIT",
   "devDependencies": {
-    "vercel": "latest"
+    "vercel": "55.0.0"
   }
 }
