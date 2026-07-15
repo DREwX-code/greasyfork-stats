@@ -1,56 +1,66 @@
-
 # GreasyFork Stats
 
-Dynamic GreasyFork statistics cards for your online profiles.
+[![Vercel](https://img.shields.io/badge/deployed_on-Vercel-000000?logo=vercel\&logoColor=white)](https://greasyfork-stats.vercel.app)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Generate customizable SVG cards from your public GreasyFork statistics and embed them in GitHub READMEs, project pages, documentation, or anywhere SVG images are supported.
+Generate customizable SVG cards from a GreasyFork user's public statistics and embed them in GitHub READMEs, project pages, documentation, or anywhere SVG images are supported.
 
 ## Preview
 
-![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=1259433&theme=github_dark&lang=en)
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=1259433\&theme=github_dark\&lang=en)
 
 ## Features
 
-- Automatic GreasyFork username detection
-- Live public statistics
-- Lightweight SVG output
-- Multiple built-in themes
-- Multiple languages
-- No authentication required
+* Public GreasyFork statistics
+* Automatic username detection
+* Total installs and daily installs
+* Script and rating statistics
+* Lightweight SVG output
+* Multiple built-in themes
+* Multiple languages
+* No authentication required
+* Cached responses for reliable performance
 
 ## Usage
 
-```md
-![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID)
-```
-
-With options:
+Replace `YOUR_USER_ID` with the numeric ID from your GreasyFork profile URL.
 
 ```md
-![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID&theme=github_dark&lang=en)
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=YOUR_USER_ID)
 ```
 
-Or with HTML:
+### With options
+
+```md
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=YOUR_USER_ID&theme=github_dark&lang=en)
+```
+
+### HTML
 
 ```html
-<img src="https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID&theme=github_dark&lang=en" alt="GreasyFork Stats">
+<img
+  src="https://greasyfork-stats.vercel.app/api/stats?user=YOUR_USER_ID&theme=github_dark&lang=en"
+  alt="GreasyFork Stats"
+/>
 ```
 
 ## Parameters
 
-| Parameter | Description | Default | Example |
-|---|---|:---:|---|
-| `user` | GreasyFork user ID | **Required** | `1259433` |
-| `theme` | Card theme | `default` | `github_dark` |
-| `lang` | Card language | `en` | `fr` |
-| `hide_title` | Hide the card title | `false` | `true` |
-| `hide_border` | Hide the card border | `false` | `true` |
+| Parameter     | Description                |    Default   | Example       |
+| ------------- | -------------------------- | :----------: | ------------- |
+| `user`        | Numeric GreasyFork user ID | **Required** | `1259433`     |
+| `theme`       | Card theme                 |   `default`  | `github_dark` |
+| `lang`        | Card language              |     `en`     | `fr`          |
+| `hide_title`  | Hide the card title        |    `false`   | `true`        |
+| `hide_border` | Hide the card border       |    `false`   | `true`        |
+
+Boolean parameters accept `true`, `false`, `1`, or `0`.
 
 ## Themes
 
 Available themes:
 
-```txt
+```text
 default
 github_dark
 dracula
@@ -66,14 +76,14 @@ solarized_dark
 Example:
 
 ```md
-![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID&theme=catppuccin)
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=YOUR_USER_ID&theme=catppuccin)
 ```
 
 ## Languages
 
 Available languages:
 
-```txt
+```text
 en
 fr
 es
@@ -83,18 +93,15 @@ de
 Example:
 
 ```md
-![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=YOUR_USER_ID&lang=fr)
+![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=YOUR_USER_ID&lang=fr)
 ```
 
-## Roadmap
+## Data and caching
 
-- Script-specific stats cards
-- More languages
-- Custom card title
-- Compact layout
-- Additional statistics
-- Public demo page
+Statistics are retrieved from GreasyFork's public API. Successful cards are cached to reduce load, improve reliability, and avoid unnecessary requests to GreasyFork.
+
+Because of this cache, recently updated statistics may take several hours to appear.
 
 ## License
 
-MIT
+Licensed under the [MIT License](LICENSE).
