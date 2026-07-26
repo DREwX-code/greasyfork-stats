@@ -1,16 +1,28 @@
 # GreasyFork Stats
 
-[![Vercel](https://img.shields.io/badge/deployed_on-Vercel-000000?logo=vercel\&logoColor=white)](https://greasyfork-stats.vercel.app)
+[![Vercel](https://img.shields.io/badge/deployed_on-Vercel-000000?logo=vercel&logoColor=white)](https://greasyfork-stats.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Generate customizable SVG cards from a GreasyFork user's public statistics and embed them in GitHub READMEs, project pages, documentation, or anywhere SVG images are supported.
 
+## Build your card
+
+The easiest way to create your card is to use the interactive generator:
+
+### [Open the GreasyFork Stats card generator →](https://greasyfork-stats.vercel.app/)
+
+Enter a GreasyFork profile ID or URL, customize the theme and language, preview the result instantly, then copy the generated URL, Markdown, or HTML code.
+
 ## Preview
 
-![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=1259433\&theme=github_dark\&lang=en)
+[![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=1259433&theme=github_dark&lang=en)](https://greasyfork-stats.vercel.app/)
 
 ## Features
 
+* Interactive card generator
+* Instant live preview
+* Ready-to-copy URL, Markdown, and HTML
+* GreasyFork profile ID or URL support
 * Public GreasyFork statistics
 * Automatic username detection
 * Total installs and daily installs
@@ -21,9 +33,9 @@ Generate customizable SVG cards from a GreasyFork user's public statistics and e
 * No authentication required
 * Cached responses for reliable performance
 
-## Usage
+## Manual usage
 
-Replace `YOUR_USER_ID` with the numeric ID from your GreasyFork profile URL.
+For manual integration, replace `YOUR_USER_ID` with the numeric ID from your GreasyFork profile URL.
 
 ```md
 ![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=YOUR_USER_ID)
@@ -46,13 +58,13 @@ Replace `YOUR_USER_ID` with the numeric ID from your GreasyFork profile URL.
 
 ## Parameters
 
-| Parameter     | Description                |    Default   | Example       |
+| Parameter     | Description                | Default      | Example       |
 | ------------- | -------------------------- | :----------: | ------------- |
 | `user`        | Numeric GreasyFork user ID | **Required** | `1259433`     |
-| `theme`       | Card theme                 |   `default`  | `github_dark` |
-| `lang`        | Card language              |     `en`     | `fr`          |
-| `hide_title`  | Hide the card title        |    `false`   | `true`        |
-| `hide_border` | Hide the card border       |    `false`   | `true`        |
+| `theme`       | Card theme                 | `default`    | `github_dark` |
+| `lang`        | Card language              | `en`         | `fr`          |
+| `hide_title`  | Hide the card title        | `false`      | `true`        |
+| `hide_border` | Hide the card border       | `false`      | `true`        |
 
 Boolean parameters accept `true`, `false`, `1`, or `0`.
 
