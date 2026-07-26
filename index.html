@@ -1,77 +1,1366 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Configure and generate your GreasyFork statistics card.">
+  <meta name="theme-color" content="#f6f6f4">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="apple-touch-icon" href="assets/logo.png">
   <title>GreasyFork Stats</title>
-  <meta name="description" content="Dynamic GreasyFork statistics cards for your online profiles." />
   <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #0d1117;
-      color: #f0f6fc;
-      font-family: Arial, sans-serif;
+    :root {
+      color-scheme: light;
+      --page: #f6f6f4;
+      --surface: #ffffff;
+      --surface-subtle: #f1f1ef;
+      --ink: #171917;
+      --ink-soft: #555a55;
+      --muted: #858a85;
+      --border: #dedfdb;
+      --border-strong: #c9cbc6;
+      --accent: #4f7f32;
+      --code-surface: #fafaf9;
+      --toggle-track: #e7e8e4;
+      --toggle-border: #d1d3ce;
+      --toggle-thumb: #ffffff;
+      --toggle-active: #171917;
+      --toggle-knob: #ffffff;
+      --radius: 14px;
     }
 
-    main {
-      max-width: 720px;
-      padding: 40px 24px;
-      text-align: center;
+    :root[data-site-theme="dark"] {
+      color-scheme: dark;
+      --page: #111311;
+      --surface: #181a18;
+      --surface-subtle: #141614;
+      --ink: #f1f2ef;
+      --ink-soft: #b5b9b3;
+      --muted: #7f857e;
+      --border: #2c302c;
+      --border-strong: #424842;
+      --accent: #83ad69;
+      --code-surface: #121412;
+      --toggle-track: #252925;
+      --toggle-border: #3a403a;
+      --toggle-thumb: #aeb4ad;
+      --toggle-active: #e6e9e3;
+      --toggle-knob: #111311;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-site-theme="light"]) {
+        color-scheme: dark;
+        --page: #111311;
+        --surface: #181a18;
+        --surface-subtle: #141614;
+        --ink: #f1f2ef;
+        --ink-soft: #b5b9b3;
+        --muted: #7f857e;
+        --border: #2c302c;
+        --border-strong: #424842;
+        --accent: #83ad69;
+        --code-surface: #121412;
+        --toggle-track: #252925;
+        --toggle-border: #3a403a;
+        --toggle-thumb: #aeb4ad;
+        --toggle-active: #e6e9e3;
+        --toggle-knob: #111311;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--page);
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background: var(--page);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+
+    button, a {
+      color: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a { text-decoration: none; }
+
+    .shell {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .wordmark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: -.02em;
+    }
+
+    .mark {
+      width: 30px;
+      height: 30px;
+      flex: 0 0 auto;
+    }
+
+    .mark img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .wordmark em {
+      color: var(--muted);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    .github {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--ink-soft);
+      font-size: 12px;
+      font-weight: 600;
+      transition: color .18s;
+    }
+
+    .github:hover { color: var(--ink); }
+    .github svg { width: 16px; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu { position: relative; }
+
+    .menu-trigger {
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0 7px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--ink-soft);
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color .18s, background .18s;
+    }
+
+    .menu-trigger:hover,
+    .menu-trigger[aria-expanded="true"] {
+      background: var(--surface-subtle);
+      color: var(--ink);
+    }
+
+    .menu-trigger svg {
+      width: 11px;
+      transition: transform .18s;
+    }
+
+    .menu-trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+    .menu-popover {
+      position: absolute;
+      z-index: 10;
+      top: calc(100% + 7px);
+      right: 0;
+      min-width: 118px;
+      padding: 5px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--surface);
+      box-shadow: 0 12px 30px rgba(16, 19, 16, .12);
+    }
+
+    .menu-popover[hidden] { display: none; }
+
+    .menu-option {
+      width: 100%;
+      min-height: 31px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 8px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--ink-soft);
+      font-size: 10px;
+      font-weight: 550;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .menu-option:hover {
+      background: var(--surface-subtle);
+      color: var(--ink);
+    }
+
+    .menu-option::after {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .menu-option[aria-selected="true"] {
+      color: var(--ink);
+      font-weight: 650;
+    }
+
+    .menu-option[aria-selected="true"]::after { background: var(--accent); }
+
+    .field-menu .menu-trigger {
+      width: 100%;
+      height: 42px;
+      justify-content: space-between;
+      padding: 0 11px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .field-menu .menu-trigger:hover,
+    .field-menu .menu-trigger[aria-expanded="true"] {
+      border-color: var(--border-strong);
+      background: var(--surface);
+    }
+
+    .field-menu .menu-popover {
+      right: auto;
+      left: 0;
+      width: max(100%, 150px);
+      max-height: 244px;
+      overflow-y: auto;
+    }
+
+    .user-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .user-status::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+
+    .user-status[data-state="valid"] { color: var(--accent); }
+    .user-status[data-state="valid"]::before { background: var(--accent); }
+    .user-status[data-state="error"] { color: #b64d4d; }
+    .user-status[data-state="error"]::before { background: #b64d4d; }
+
+    main { padding: 68px 0 80px; }
+
+    .intro {
+      max-width: 660px;
+      margin-bottom: 46px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
     }
 
     h1 {
-      font-size: 48px;
-      margin-bottom: 12px;
+      margin: 0;
+      font-size: clamp(36px, 5vw, 54px);
+      font-weight: 620;
+      line-height: 1.04;
+      letter-spacing: -.05em;
     }
 
-    p {
-      color: #8b949e;
-      font-size: 18px;
-      line-height: 1.6;
+    .intro > p:last-child {
+      max-width: 540px;
+      margin: 18px 0 0;
+      color: var(--ink-soft);
+      font-size: 16px;
+      line-height: 1.65;
     }
 
-    img {
-      margin: 28px 0;
-      max-width: 100%;
+    .app {
+      position: relative;
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      overflow: visible;
     }
 
-    code {
+    .settings {
+      position: relative;
+      z-index: 3;
+      padding: 26px;
+      border-right: 1px solid var(--border);
+      border-radius: calc(var(--radius) - 1px) 0 0 calc(var(--radius) - 1px);
+      background: var(--surface);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: -.01em;
+    }
+
+    .section-subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    form { margin-top: 26px; }
+
+    .field + .field,
+    .field + .two-columns,
+    .two-columns + .options { margin-top: 19px; }
+
+    .two-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    label, .field-label {
       display: block;
-      margin-top: 20px;
-      padding: 16px;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      background: #161b22;
-      color: #c9d1d9;
-      overflow-x: auto;
+      margin-bottom: 7px;
+      color: var(--ink-soft);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      outline: none;
+      background-color: var(--surface);
+      color: var(--ink);
+      transition: border-color .18s, box-shadow .18s;
+    }
+
+    input {
+      padding: 0 12px;
+      appearance: none;
+    }
+
+    input:hover { border-color: var(--border-strong); }
+
+    input:focus {
+      border-color: #92978f;
+      box-shadow: 0 0 0 3px rgba(23, 25, 23, .06);
+    }
+
+    .help {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .options {
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+
+    .option {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 0;
+      color: var(--ink-soft);
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .switch {
+      position: relative;
+      width: 34px;
+      height: 20px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+
+    .switch-ui {
+      position: absolute;
+      inset: 0;
+      border: 1px solid var(--toggle-border);
+      border-radius: 99px;
+      background: var(--toggle-track);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, .04);
+      transition:
+        background-color .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .switch-ui::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--toggle-thumb);
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, .18),
+        0 0 0 .5px rgba(0, 0, 0, .06);
+      transition:
+        transform .22s cubic-bezier(.2, .8, .2, 1),
+        background-color .2s ease;
+    }
+
+    .option:hover .switch-ui { border-color: var(--border-strong); }
+
+    .switch input:checked + .switch-ui {
+      border-color: var(--toggle-active);
+      background: var(--toggle-active);
+      box-shadow: none;
+    }
+
+    .switch input:checked + .switch-ui::after {
+      background: var(--toggle-knob);
+      transform: translateX(16px);
+    }
+
+    .switch input:focus-visible + .switch-ui {
+      border-color: var(--ink);
+      box-shadow: 0 0 0 3px rgba(79, 127, 50, .16);
+    }
+
+    .workspace {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+    }
+
+    .preview {
+      min-height: 350px;
+      display: grid;
+      place-items: center;
+      padding: 44px 30px 26px;
+      background: var(--surface-subtle);
+      border-radius: 0 calc(var(--radius) - 1px) 0 0;
+    }
+
+    #previewStage {
+      width: 100%;
+      display: grid;
+      place-items: center;
+    }
+
+    #cardPreview {
+      display: block;
+      width: min(100%, 500px);
+      height: auto;
+    }
+
+    .local-note {
+      max-width: 540px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 22px auto 0;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.55;
       text-align: left;
     }
 
-    a {
-      color: #58a6ff;
-      text-decoration: none;
+    .local-note svg {
+      width: 13px;
+      flex: 0 0 auto;
+      margin-top: 1px;
+      color: var(--accent);
+    }
+
+    .export {
+      padding: 24px 26px 26px;
+      border-top: 1px solid var(--border);
+      border-radius: 0 0 calc(var(--radius) - 1px) 0;
+      background: var(--surface);
+    }
+
+    .export-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 13px;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 17px;
+    }
+
+    .tab {
+      padding: 0 0 6px;
+      border: 0;
+      border-bottom: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
       font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab:hover { color: var(--ink-soft); }
+
+    .tab[aria-selected="true"] {
+      border-bottom-color: var(--ink);
+      color: var(--ink);
+    }
+
+    .open-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--ink-soft);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .open-card:hover { color: var(--ink); }
+    .open-card svg { width: 12px; }
+
+    .code-wrap {
+      position: relative;
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      padding: 15px 102px 15px 15px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--code-surface);
+    }
+
+    #codeOutput {
+      margin: 0;
+      color: #696c69;
+      font: 10px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .copy {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      height: 32px;
+      min-width: 76px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--surface);
+      color: var(--ink-soft);
+      font-size: 10px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: border-color .18s, color .18s;
+    }
+
+    .copy:hover {
+      border-color: var(--border-strong);
+      color: var(--ink);
+    }
+
+    .copy.success {
+      border-color: #b9c9b0;
+      color: var(--accent);
+    }
+
+    .copy svg { width: 13px; }
+
+    footer {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    footer nav { display: flex; gap: 18px; }
+    footer a:hover { color: var(--ink); }
+
+    @media (max-width: 800px) {
+      main { padding-top: 48px; }
+      .intro { margin-bottom: 34px; }
+      .app { grid-template-columns: 1fr; }
+      .settings {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+        border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+      }
+      .preview { border-radius: 0; }
+      .export {
+        border-radius: 0 0 calc(var(--radius) - 1px) calc(var(--radius) - 1px);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 24px, 1120px); }
+      header { height: 64px; }
+      .github { display: none; }
+      .header-actions { gap: 2px; }
+      main { padding: 42px 0 56px; }
+      h1 { font-size: 38px; }
+      .intro > p:last-child { font-size: 14px; }
+      .settings, .export { padding: 21px 18px; }
+      .preview { min-height: 265px; padding: 30px 12px 22px; }
+      .local-note { padding: 0 8px; }
+      .code-wrap { padding: 55px 13px 13px; }
+      .copy { left: 12px; right: auto; }
+      footer { flex-direction: column; justify-content: center; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>GreasyFork Stats</h1>
-    <p>Dynamic GreasyFork statistics cards for your online profiles.</p>
+  <div class="shell">
+    <header>
+      <div class="wordmark" aria-label="GreasyFork Stats">
+        <span class="mark" aria-hidden="true">
+          <img src="assets/logo.png" alt="">
+        </span>
+        <span>GreasyFork <em>Stats</em></span>
+      </div>
 
-    <img
-      src="/api?user=1259433&theme=github_dark&lang=en"
-      alt="GreasyFork Stats preview"
-    />
+      <div class="header-actions">
+        <div class="menu" id="themeMenu">
+          <button class="menu-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <span data-menu-value>Auto</span>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="m4 6 4 4 4-4"/>
+            </svg>
+          </button>
+          <div class="menu-popover" role="listbox" aria-label="Interface theme" data-i18n-aria="interfaceTheme" hidden>
+            <button class="menu-option" type="button" role="option" data-value="auto" data-i18n-menu="themeAuto" aria-selected="true">Auto</button>
+            <button class="menu-option" type="button" role="option" data-value="light" data-i18n-menu="themeLight" aria-selected="false">Light</button>
+            <button class="menu-option" type="button" role="option" data-value="dark" data-i18n-menu="themeDark" aria-selected="false">Dark</button>
+          </div>
+        </div>
 
-    <code>![GreasyFork Stats](https://greasyfork-stats.vercel.app/api?user=1259433&theme=github_dark)</code>
+        <div class="menu" id="languageMenu">
+          <button class="menu-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <span data-menu-value>EN</span>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="m4 6 4 4 4-4"/>
+            </svg>
+          </button>
+          <div class="menu-popover" role="listbox" aria-label="Interface language" data-i18n-aria="interfaceLanguage" hidden>
+            <button class="menu-option" type="button" role="option" data-value="en" aria-selected="true">EN</button>
+            <button class="menu-option" type="button" role="option" data-value="fr" aria-selected="false">FR</button>
+          </div>
+        </div>
 
-    <p>
-      <a href="https://github.com/DREwX-code/greasyfork-stats">View on GitHub</a>
-    </p>
-  </main>
+        <a class="github" href="https://github.com/DREwX-code/greasyfork-stats" target="_blank" rel="noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 .7a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.3c-3.4.7-4.1-1.4-4.1-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .7Z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <p class="eyebrow" data-i18n="eyebrow">Card generator</p>
+        <h1 data-i18n="headline">Showcase your GreasyFork statistics.</h1>
+        <p data-i18n="intro">Configure your card, preview it instantly, then copy the format you need.</p>
+      </section>
+
+      <section class="app" aria-label="GreasyFork card builder" data-i18n-aria="builder">
+        <aside class="settings">
+          <h2 class="section-title" data-i18n="settings">Settings</h2>
+          <p class="section-subtitle" data-i18n="settingsHelp">Customize the content and appearance.</p>
+
+          <form id="builderForm">
+            <div class="field">
+              <label for="user" data-i18n="userLabel">GreasyFork user</label>
+              <input id="user" name="user" value="1259433" autocomplete="off" spellcheck="false">
+              <p class="help user-status" id="userStatus" data-state="idle">Profile ID or URL.</p>
+            </div>
+
+            <div class="field">
+              <label for="previewName" data-i18n="previewName">Preview name</label>
+              <input id="previewName" name="previewName" value="Dℝ∃wX" maxlength="32" autocomplete="off">
+              <p class="help" data-i18n="previewHelp">The API will detect the real name automatically.</p>
+            </div>
+
+            <div class="two-columns">
+              <div>
+                <span class="field-label" data-i18n="cardTheme">Card theme</span>
+                <div class="menu field-menu" id="cardThemeMenu">
+                  <button class="menu-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                    <span data-menu-value>GitHub Dark</span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <path d="m4 6 4 4 4-4"/>
+                    </svg>
+                  </button>
+                  <div class="menu-popover" role="listbox" aria-label="Card theme" data-i18n-aria="cardTheme" hidden>
+                    <button class="menu-option" type="button" role="option" data-value="github_dark" aria-selected="true">GitHub Dark</button>
+                    <button class="menu-option" type="button" role="option" data-value="default" aria-selected="false">Default</button>
+                    <button class="menu-option" type="button" role="option" data-value="dracula" aria-selected="false">Dracula</button>
+                    <button class="menu-option" type="button" role="option" data-value="nord" aria-selected="false">Nord</button>
+                    <button class="menu-option" type="button" role="option" data-value="gruvbox" aria-selected="false">Gruvbox</button>
+                    <button class="menu-option" type="button" role="option" data-value="tokyonight" aria-selected="false">Tokyo Night</button>
+                    <button class="menu-option" type="button" role="option" data-value="catppuccin" aria-selected="false">Catppuccin</button>
+                    <button class="menu-option" type="button" role="option" data-value="monokai" aria-selected="false">Monokai</button>
+                    <button class="menu-option" type="button" role="option" data-value="cyberpunk" aria-selected="false">Cyberpunk</button>
+                    <button class="menu-option" type="button" role="option" data-value="solarized_dark" aria-selected="false">Solarized</button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <span class="field-label" data-i18n="cardLanguage">Card language</span>
+                <div class="menu field-menu" id="cardLanguageMenu">
+                  <button class="menu-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                    <span data-menu-value>English</span>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <path d="m4 6 4 4 4-4"/>
+                    </svg>
+                  </button>
+                  <div class="menu-popover" role="listbox" aria-label="Card language" data-i18n-aria="cardLanguage" hidden>
+                    <button class="menu-option" type="button" role="option" data-value="en" aria-selected="true">English</button>
+                    <button class="menu-option" type="button" role="option" data-value="fr" aria-selected="false">Français</button>
+                    <button class="menu-option" type="button" role="option" data-value="es" aria-selected="false">Español</button>
+                    <button class="menu-option" type="button" role="option" data-value="de" aria-selected="false">Deutsch</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="options" aria-label="Display options" data-i18n-aria="displayOptions">
+              <label class="option">
+                <span data-i18n="hideTitle">Hide title</span>
+                <span class="switch">
+                  <input id="hideTitle" type="checkbox">
+                  <span class="switch-ui" aria-hidden="true"></span>
+                </span>
+              </label>
+              <label class="option">
+                <span data-i18n="hideBorder">Hide border</span>
+                <span class="switch">
+                  <input id="hideBorder" type="checkbox">
+                  <span class="switch-ui" aria-hidden="true"></span>
+                </span>
+              </label>
+            </div>
+          </form>
+        </aside>
+
+        <div class="workspace">
+          <div class="preview">
+            <div>
+              <div id="previewStage" aria-live="polite"></div>
+              <p class="local-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"/>
+                  <path d="M12 11v6M12 7.5v.5"/>
+                </svg>
+                <span id="localNote">Live data fetched directly from GreasyFork. No server-side proxy.</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="export">
+            <div class="export-head">
+              <div class="tabs" role="tablist" aria-label="Embed format" data-i18n-aria="embedFormat">
+                <button class="tab" type="button" role="tab" data-format="url" aria-selected="false">URL</button>
+                <button class="tab" type="button" role="tab" data-format="markdown" aria-selected="true">Markdown</button>
+                <button class="tab" type="button" role="tab" data-format="html" aria-selected="false">HTML</button>
+              </div>
+
+              <a class="open-card" id="openCard" href="https://greasyfork-stats.vercel.app/api/stats?user=1259433&amp;theme=github_dark&amp;lang=en" target="_blank" rel="noreferrer">
+                <span data-i18n="openCard">Open card</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M7 17 17 7M8 7h9v9"/>
+                </svg>
+              </a>
+            </div>
+
+            <div class="code-wrap">
+              <code id="codeOutput"></code>
+              <button class="copy" id="copyButton" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <rect x="8" y="8" width="11" height="11" rx="2"/>
+                  <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>
+                </svg>
+                <span data-i18n="copy">Copy</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>GreasyFork Stats · Open source</span>
+      <nav aria-label="Secondary links" data-i18n-aria="secondaryLinks">
+        <a href="https://github.com/DREwX-code/greasyfork-stats#usage" target="_blank" rel="noreferrer">Documentation</a>
+        <a href="https://github.com/DREwX-code/greasyfork-stats/blob/main/LICENSE" target="_blank" rel="noreferrer">MIT</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script>
+    const API_BASE_URL = "https://greasyfork-stats.vercel.app/api/stats";
+
+    const themes = {
+      default: { bg: "#fffefe", border: "#e4e2e2", title: "#2f80ed", text: "#434d58" },
+      github_dark: { bg: "#0d1117", border: "#30363d", title: "#58a6ff", text: "#c9d1d9" },
+      dracula: { bg: "#282a36", border: "#44475a", title: "#ff79c6", text: "#f8f8f2" },
+      nord: { bg: "#2e3440", border: "#3b4252", title: "#88c0d0", text: "#eceff4" },
+      gruvbox: { bg: "#282828", border: "#3c3836", title: "#fe8019", text: "#ebdbb2" },
+      tokyonight: { bg: "#1a1b27", border: "#3b4261", title: "#7aa2f7", text: "#c0caf5" },
+      catppuccin: { bg: "#1e1e2e", border: "#313244", title: "#89dceb", text: "#cdd6f4" },
+      monokai: { bg: "#272822", border: "#3e3d32", title: "#66d9ef", text: "#f8f8f2" },
+      cyberpunk: { bg: "#0a0e27", border: "#1a1f3a", title: "#00f0ff", text: "#d1d5e8" },
+      solarized_dark: { bg: "#002b36", border: "#073642", title: "#268bd2", text: "#93a1a1" }
+    };
+
+    const translations = {
+      en: { title: name => `${name}'s Userscript Stats`, total: "Total Installs", daily: "Daily Installs", scripts: "Scripts", rating: "Rating" },
+      fr: { title: name => `${name}'s GreasyFork Stats`, total: "Installations totales", daily: "Installations / jour", scripts: "Scripts", rating: "Note" },
+      es: { title: name => `${name}'s GreasyFork Stats`, total: "Instalaciones totales", daily: "Instalaciones diarias", scripts: "Scripts", rating: "Valoración" },
+      de: { title: name => `${name}'s GreasyFork Stats`, total: "Installationen gesamt", daily: "Installationen / Tag", scripts: "Skripte", rating: "Bewertung" }
+    };
+
+    const interfaceStrings = {
+      en: {
+        interfaceTheme: "Interface theme",
+        interfaceLanguage: "Interface language",
+        builder: "GreasyFork card builder",
+        displayOptions: "Display options",
+        embedFormat: "Embed format",
+        secondaryLinks: "Secondary links",
+        themeAuto: "Auto",
+        themeLight: "Light",
+        themeDark: "Dark",
+        eyebrow: "Card generator",
+        headline: "Showcase your GreasyFork statistics.",
+        intro: "Configure your card, preview it instantly, then copy the format you need.",
+        settings: "Settings",
+        settingsHelp: "Customize the content and appearance.",
+        userLabel: "GreasyFork user",
+        previewName: "Preview name",
+        previewHelp: "The API will detect the real name automatically.",
+        cardTheme: "Card theme",
+        cardLanguage: "Card language",
+        hideTitle: "Hide title",
+        hideBorder: "Hide border",
+        openCard: "Open card",
+        copy: "Copy",
+        copied: "Copied",
+        userIdle: "Profile ID or URL.",
+        userChecking: "Checking GreasyFork…",
+        userValid: name => `${name} · data loaded`,
+        userError: "User not found or unavailable.",
+        localNote: stats => `Live data fetched directly from GreasyFork — ${formatNumber(stats.totalInstalls)} installs, ${formatNumber(stats.dailyInstalls)} daily installs, ${formatNumber(stats.scriptCount)} scripts. No server-side proxy.`
+      },
+      fr: {
+        interfaceTheme: "Thème de l’interface",
+        interfaceLanguage: "Langue de l’interface",
+        builder: "Configurateur de carte GreasyFork",
+        displayOptions: "Options d’affichage",
+        embedFormat: "Format d’intégration",
+        secondaryLinks: "Liens secondaires",
+        themeAuto: "Auto",
+        themeLight: "Clair",
+        themeDark: "Sombre",
+        eyebrow: "Générateur de carte",
+        headline: "Présentez vos statistiques GreasyFork.",
+        intro: "Configurez votre carte, contrôlez son rendu instantanément, puis copiez le format dont vous avez besoin.",
+        settings: "Paramètres",
+        settingsHelp: "Personnalisez le contenu et l’apparence.",
+        userLabel: "Utilisateur GreasyFork",
+        previewName: "Nom dans l’aperçu",
+        previewHelp: "L’API détectera automatiquement le nom réel.",
+        cardTheme: "Thème de la carte",
+        cardLanguage: "Langue de la carte",
+        hideTitle: "Masquer le titre",
+        hideBorder: "Masquer la bordure",
+        openCard: "Ouvrir la carte",
+        copy: "Copier",
+        copied: "Copié",
+        userIdle: "Identifiant ou URL du profil.",
+        userChecking: "Vérification sur GreasyFork…",
+        userValid: name => `${name} · données chargées`,
+        userError: "Utilisateur introuvable ou indisponible.",
+        localNote: stats => `Données récupérées directement depuis GreasyFork — ${formatNumber(stats.totalInstalls)} installations, ${formatNumber(stats.dailyInstalls)} installations quotidiennes, ${formatNumber(stats.scriptCount)} scripts. Aucun proxy côté serveur.`
+      }
+    };
+
+    const themeMenu = document.querySelector("#themeMenu");
+    const languageMenu = document.querySelector("#languageMenu");
+    const form = document.querySelector("#builderForm");
+    const userInput = document.querySelector("#user");
+    const userStatus = document.querySelector("#userStatus");
+    const previewNameInput = document.querySelector("#previewName");
+    const cardThemeMenu = document.querySelector("#cardThemeMenu");
+    const cardLanguageMenu = document.querySelector("#cardLanguageMenu");
+    const hideTitleInput = document.querySelector("#hideTitle");
+    const hideBorderInput = document.querySelector("#hideBorder");
+    const previewStage = document.querySelector("#previewStage");
+    const localNote = document.querySelector("#localNote");
+    const codeOutput = document.querySelector("#codeOutput");
+    const copyButton = document.querySelector("#copyButton");
+    const openCard = document.querySelector("#openCard");
+    const tabs = [...document.querySelectorAll(".tab")];
+    let activeFormat = "markdown";
+    let interfaceLanguage = "en";
+    let cardThemeValue = "github_dark";
+    let cardLanguageValue = "en";
+    let userStatusState = "idle";
+    let verifiedUsername = "";
+    let fetchController;
+    let fetchTimer;
+    let copyTimer;
+    let previewStats = {
+      totalInstalls: 3791,
+      dailyInstalls: 26,
+      scriptCount: 7,
+      goodRatings: 69,
+      okRatings: 4,
+      badRatings: 0
+    };
+    const statsCache = new Map();
+
+    function setMenuValue(menu, value) {
+      const options = [...menu.querySelectorAll(".menu-option")];
+      const selected = options.find(option => option.dataset.value === value) || options[0];
+      options.forEach(option => option.setAttribute("aria-selected", String(option === selected)));
+      menu.querySelector("[data-menu-value]").textContent = selected.textContent;
+    }
+
+    function closeMenus(except) {
+      document.querySelectorAll(".menu").forEach(menu => {
+        if (menu === except) return;
+        menu.querySelector(".menu-trigger").setAttribute("aria-expanded", "false");
+        menu.querySelector(".menu-popover").hidden = true;
+      });
+    }
+
+    function initializeMenu(menu, onSelect) {
+      const trigger = menu.querySelector(".menu-trigger");
+      const popover = menu.querySelector(".menu-popover");
+
+      trigger.addEventListener("click", () => {
+        const willOpen = popover.hidden;
+        closeMenus(menu);
+        popover.hidden = !willOpen;
+        trigger.setAttribute("aria-expanded", String(willOpen));
+      });
+
+      menu.querySelectorAll(".menu-option").forEach(option => {
+        option.addEventListener("click", () => {
+          setMenuValue(menu, option.dataset.value);
+          popover.hidden = true;
+          trigger.setAttribute("aria-expanded", "false");
+          trigger.focus();
+          onSelect(option.dataset.value);
+        });
+      });
+    }
+
+    function applySiteTheme(value, persist = true) {
+      const theme = ["light", "dark"].includes(value) ? value : "auto";
+      if (theme === "auto") {
+        document.documentElement.removeAttribute("data-site-theme");
+      } else {
+        document.documentElement.dataset.siteTheme = theme;
+      }
+
+      setMenuValue(themeMenu, theme);
+      const isDark = theme === "dark" || (theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
+      document.querySelector('meta[name="theme-color"]').content = isDark ? "#111311" : "#f6f6f4";
+      if (persist) {
+        try { localStorage.setItem("greasyfork-stats-site-theme", theme); } catch {}
+      }
+    }
+
+    function applyInterfaceLanguage(value, persist = true) {
+      interfaceLanguage = value === "fr" ? "fr" : "en";
+      const strings = interfaceStrings[interfaceLanguage];
+      document.documentElement.lang = interfaceLanguage;
+      document.querySelectorAll("[data-i18n]").forEach(element => {
+        element.textContent = strings[element.dataset.i18n];
+      });
+      document.querySelectorAll("[data-i18n-menu]").forEach(element => {
+        element.textContent = strings[element.dataset.i18nMenu];
+      });
+      document.querySelectorAll("[data-i18n-aria]").forEach(element => {
+        element.setAttribute("aria-label", strings[element.dataset.i18nAria]);
+      });
+      setMenuValue(themeMenu, document.documentElement.dataset.siteTheme || "auto");
+      setMenuValue(languageMenu, interfaceLanguage);
+      updateUserStatus();
+      updateLocalNote();
+      if (persist) {
+        try { localStorage.setItem("greasyfork-stats-site-language", interfaceLanguage); } catch {}
+      }
+    }
+
+    function updateUserStatus() {
+      const strings = interfaceStrings[interfaceLanguage];
+      userStatus.dataset.state = userStatusState;
+      if (userStatusState === "checking") {
+        userStatus.textContent = strings.userChecking;
+      } else if (userStatusState === "valid") {
+        userStatus.textContent = strings.userValid(verifiedUsername);
+      } else if (userStatusState === "error") {
+        userStatus.textContent = strings.userError;
+      } else {
+        userStatus.textContent = strings.userIdle;
+      }
+    }
+
+    function updateLocalNote() {
+      localNote.textContent = interfaceStrings[interfaceLanguage].localNote(previewStats);
+    }
+
+    function escapeXml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&apos;");
+    }
+
+    function normalizeUser(value) {
+      const clean = value.trim();
+      const urlMatch = clean.match(/greasyfork\.org\/(?:[a-z-]+\/)?users\/(\d+)/i);
+      const idMatch = clean.match(/^(\d+)/);
+      return urlMatch ? urlMatch[1] : idMatch ? idMatch[1] : clean;
+    }
+
+    function safeNumber(value) {
+      const number = Number(value);
+      return Number.isFinite(number) && number > 0 ? Math.round(number) : 0;
+    }
+
+    function formatNumber(value) {
+      const number = safeNumber(value);
+      if (number >= 1_000_000) return `${(number / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
+      if (number >= 1_000) return `${(number / 1_000).toFixed(1).replace(/\.0$/, "")}k`;
+      return String(number);
+    }
+
+    function aggregateStats(data) {
+      const scripts = Array.isArray(data.scripts) ? data.scripts : [];
+      const sum = key => scripts.reduce((total, script) => total + safeNumber(script?.[key]), 0);
+      return {
+        username: data.name || data.username || "GreasyFork",
+        totalInstalls: sum("total_installs"),
+        dailyInstalls: sum("daily_installs"),
+        scriptCount: scripts.length,
+        goodRatings: sum("good_ratings"),
+        okRatings: sum("ok_ratings"),
+        badRatings: sum("bad_ratings")
+      };
+    }
+
+    async function fetchUserStats() {
+      const user = normalizeUser(userInput.value);
+      clearTimeout(fetchTimer);
+      fetchController?.abort();
+
+      if (!user) {
+        userStatusState = "idle";
+        verifiedUsername = "";
+        updateUserStatus();
+        return;
+      }
+
+      userStatusState = "checking";
+      updateUserStatus();
+
+      try {
+        let stats = statsCache.get(user);
+        if (!stats) {
+          fetchController = new AbortController();
+          const response = await fetch(`https://api.greasyfork.org/en/users/${encodeURIComponent(user)}.json`, {
+            headers: { Accept: "application/json" },
+            signal: fetchController.signal
+          });
+          if (!response.ok) throw new Error("User not found");
+          stats = aggregateStats(await response.json());
+          statsCache.set(user, stats);
+        }
+
+        previewStats = stats;
+        verifiedUsername = stats.username;
+        previewNameInput.value = stats.username;
+        userStatusState = "valid";
+        updateUserStatus();
+        updateLocalNote();
+        render();
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        userStatusState = "error";
+        verifiedUsername = "";
+        updateUserStatus();
+      }
+    }
+
+    function scheduleUserFetch() {
+      clearTimeout(fetchTimer);
+      fetchTimer = setTimeout(fetchUserStats, 650);
+    }
+
+    function getState() {
+      return {
+        user: normalizeUser(userInput.value) || "1259433",
+        name: previewNameInput.value.trim() || "GreasyFork",
+        theme: cardThemeValue,
+        lang: cardLanguageValue,
+        hideTitle: hideTitleInput.checked,
+        hideBorder: hideBorderInput.checked
+      };
+    }
+
+    function buildUrl(state) {
+      const url = new URL(API_BASE_URL);
+      url.searchParams.set("user", state.user);
+      url.searchParams.set("theme", state.theme);
+      url.searchParams.set("lang", state.lang);
+      if (state.hideTitle) url.searchParams.set("hide_title", "true");
+      if (state.hideBorder) url.searchParams.set("hide_border", "true");
+      return url.href;
+    }
+
+    function getOutput(url) {
+      if (activeFormat === "url") return url;
+      if (activeFormat === "html") {
+        return `<img src="${url.replaceAll("&", "&amp;")}" alt="GreasyFork Stats">`;
+      }
+      return `![GreasyFork Stats](${url})`;
+    }
+
+    function renderPreview(state) {
+      const theme = themes[state.theme] || themes.default;
+      const t = translations[state.lang] || translations.en;
+      const ratingTotal = previewStats.goodRatings + previewStats.okRatings + previewStats.badRatings;
+      const rating = ratingTotal > 0
+        ? `${Math.round((previewStats.goodRatings / ratingTotal) * 100)}%`
+        : null;
+      const rows = [
+        [t.total, formatNumber(previewStats.totalInstalls)],
+        [t.daily, formatNumber(previewStats.dailyInstalls)],
+        [t.scripts, formatNumber(previewStats.scriptCount)]
+      ];
+      if (rating) rows.push([t.rating, rating]);
+      const startY = state.hideTitle ? 40 : 78;
+      const height = Math.max(178, startY + rows.length * 27 + 16);
+      const title = t.title(state.name);
+      const titleBlock = state.hideTitle ? "" : `
+        <rect x="24" y="23" width="4" height="22" rx="2" fill="${theme.title}"/>
+        <text x="38" y="40" class="title">${escapeXml(title)}</text>`;
+      const rowBlocks = rows.map(([label, value], index) => {
+        const y = startY + index * 27;
+        const divider = index === rows.length - 1 ? "" : `<line x1="24" y1="${y + 11}" x2="396" y2="${y + 11}" class="divider"/>`;
+        return `<g>
+          <text x="24" y="${y}" class="label">${escapeXml(label)}</text>
+          <text x="396" y="${y}" text-anchor="end" class="value">${value}</text>
+          ${divider}
+        </g>`;
+      }).join("");
+      const border = state.hideBorder ? "" : `stroke="${theme.border}" stroke-width="1"`;
+
+      previewStage.innerHTML = `<svg id="cardPreview" width="420" height="${height}" viewBox="0 0 420 ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeXml(title)}">
+        <defs>
+          <linearGradient id="card-bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="${theme.bg}"/>
+            <stop offset="100%" stop-color="${theme.bg}" stop-opacity="0.94"/>
+          </linearGradient>
+        </defs>
+        <style>
+          .title{font:600 16px 'Segoe UI',Ubuntu,sans-serif;fill:${theme.title}}
+          .label{font:400 13px 'Segoe UI',Ubuntu,sans-serif;fill:${theme.text};opacity:.82}
+          .value{font:700 14px 'Segoe UI',Ubuntu,sans-serif;fill:${theme.text}}
+          .divider{stroke:${theme.border};stroke-width:1;opacity:.45}
+        </style>
+        <rect x=".5" y=".5" rx="10" width="419" height="${height - 1}" fill="url(#card-bg)" ${border}/>
+        ${titleBlock}
+        ${rowBlocks}
+      </svg>`;
+    }
+
+    function render() {
+      const state = getState();
+      const url = buildUrl(state);
+      renderPreview(state);
+      codeOutput.textContent = getOutput(url);
+      openCard.href = url;
+
+      try {
+        localStorage.setItem("greasyfork-stats-builder-v2", JSON.stringify(state));
+      } catch {}
+    }
+
+    function restoreState() {
+      try {
+        const state = JSON.parse(localStorage.getItem("greasyfork-stats-builder-v2"));
+        if (!state) return;
+        userInput.value = state.user || "1259433";
+        previewNameInput.value = state.name || "Dℝ∃wX";
+        if (themes[state.theme]) cardThemeValue = state.theme;
+        if (translations[state.lang]) cardLanguageValue = state.lang;
+        setMenuValue(cardThemeMenu, cardThemeValue);
+        setMenuValue(cardLanguageMenu, cardLanguageValue);
+        hideTitleInput.checked = Boolean(state.hideTitle);
+        hideBorderInput.checked = Boolean(state.hideBorder);
+      } catch {}
+    }
+
+    initializeMenu(themeMenu, applySiteTheme);
+    initializeMenu(languageMenu, applyInterfaceLanguage);
+    initializeMenu(cardThemeMenu, value => {
+      cardThemeValue = themes[value] ? value : "github_dark";
+      render();
+    });
+    initializeMenu(cardLanguageMenu, value => {
+      cardLanguageValue = translations[value] ? value : "en";
+      render();
+    });
+
+    cardThemeMenu.querySelectorAll(".menu-option").forEach(option => {
+      option.addEventListener("mouseenter", () => {
+        const previewState = getState();
+        renderPreview({ ...previewState, theme: option.dataset.value });
+      });
+    });
+
+    cardThemeMenu.addEventListener("mouseleave", () => {
+      renderPreview(getState());
+    });
+
+    document.addEventListener("click", event => {
+      if (!event.target.closest(".menu")) closeMenus();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeMenus();
+    });
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        activeFormat = tab.dataset.format;
+        tabs.forEach(item => item.setAttribute("aria-selected", String(item === tab)));
+        render();
+      });
+    });
+
+    form.addEventListener("input", render);
+    form.addEventListener("change", render);
+    userInput.addEventListener("input", scheduleUserFetch);
+
+    copyButton.addEventListener("click", async () => {
+      const value = codeOutput.textContent;
+
+      try {
+        await navigator.clipboard.writeText(value);
+      } catch {
+        const textArea = document.createElement("textarea");
+        textArea.value = value;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        textArea.remove();
+      }
+
+      clearTimeout(copyTimer);
+      copyButton.classList.add("success");
+      copyButton.querySelector("span").textContent = interfaceStrings[interfaceLanguage].copied;
+      copyTimer = setTimeout(() => {
+        copyButton.classList.remove("success");
+        copyButton.querySelector("span").textContent = interfaceStrings[interfaceLanguage].copy;
+      }, 1600);
+    });
+
+    let savedTheme = "auto";
+    let savedLanguage = "en";
+    try {
+      savedTheme = localStorage.getItem("greasyfork-stats-site-theme") || "auto";
+      savedLanguage = localStorage.getItem("greasyfork-stats-site-language") || "en";
+    } catch {}
+
+    applySiteTheme(savedTheme, false);
+    applyInterfaceLanguage(savedLanguage, false);
+    restoreState();
+    render();
+    fetchUserStats();
+  </script>
 </body>
 </html>
