@@ -1,6 +1,6 @@
 # GreasyFork Stats
 
-[![Vercel](https://img.shields.io/badge/deployed_on-Vercel-000000?logo=vercel&logoColor=white)](https://greasyfork-stats.vercel.app/)
+[![Vercel](https://img.shields.io/badge/deployed_on-Vercel-000000?logo=vercel&logoColor=white)](https://greasyfork-stats.drewx.dev/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Generate customizable SVG cards from a GreasyFork user's public statistics and embed them in GitHub READMEs, project pages, documentation, or anywhere SVG images are supported.
@@ -9,13 +9,13 @@ Generate customizable SVG cards from a GreasyFork user's public statistics and e
 
 The easiest way to create your card is to use the interactive generator:
 
-### [Open the GreasyFork Stats card generator →](https://greasyfork-stats.vercel.app/)
+### [Open the GreasyFork Stats card generator →](https://greasyfork-stats.drewx.dev/)
 
 Enter a GreasyFork profile ID or URL, customize the theme and language, preview the result instantly, then copy the generated URL, Markdown, or HTML code.
 
 ## Preview
 
-[![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=1259433&theme=github_dark&lang=en)](https://greasyfork-stats.vercel.app/)
+[![GreasyFork Stats](https://greasyfork-stats.vercel.app/api/stats?user=1259433&theme=github_dark&lang=en)](https://greasyfork-stats.drewx.dev/)
 
 ## Features
 
