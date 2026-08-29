@@ -27,10 +27,7 @@ export default async function handler(req, res) {
     res
       .status(400)
       .send(
-        renderErrorCard(
-          "Missing parameter: ?user=<greasyfork-user-id>",
-          theme,
-        ),
+        renderErrorCard("Missing parameter: ?user=<greasyfork-user-id>", theme),
       );
     return;
   }
@@ -71,9 +68,7 @@ export default async function handler(req, res) {
 
     res.setHeader(
       "Cache-Control",
-      status === 404
-        ? "public, max-age=300, s-maxage=300"
-        : "no-store",
+      status === 404 ? "public, max-age=300, s-maxage=300" : "no-store",
     );
 
     res

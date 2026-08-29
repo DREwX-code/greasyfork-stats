@@ -19,19 +19,19 @@ Enter a GreasyFork profile ID or URL, customize the theme and language, preview 
 
 ## Features
 
-* Interactive card generator
-* Instant live preview
-* Ready-to-copy URL, Markdown, and HTML
-* GreasyFork profile ID or URL support
-* Public GreasyFork statistics
-* Automatic username detection
-* Total installs and daily installs
-* Script and rating statistics
-* Lightweight SVG output
-* Multiple built-in themes
-* Multiple languages
-* No authentication required
-* Cached responses for reliable performance
+- Interactive card generator
+- Instant live preview
+- Ready-to-copy URL, Markdown, and HTML
+- GreasyFork profile ID or URL support
+- Public GreasyFork statistics
+- Automatic username detection
+- Total installs and daily installs
+- Script and rating statistics
+- Lightweight SVG output
+- Multiple built-in themes
+- Multiple languages
+- No authentication required
+- Cached responses for reliable performance
 
 ## Manual usage
 
@@ -58,13 +58,13 @@ For manual integration, replace `YOUR_USER_ID` with the numeric ID from your Gre
 
 ## Parameters
 
-| Parameter     | Description                | Default      | Example       |
+| Parameter     | Description                |   Default    | Example       |
 | ------------- | -------------------------- | :----------: | ------------- |
 | `user`        | Numeric GreasyFork user ID | **Required** | `1259433`     |
-| `theme`       | Card theme                 | `default`    | `github_dark` |
-| `lang`        | Card language              | `en`         | `fr`          |
-| `hide_title`  | Hide the card title        | `false`      | `true`        |
-| `hide_border` | Hide the card border       | `false`      | `true`        |
+| `theme`       | Card theme                 |  `default`   | `github_dark` |
+| `lang`        | Card language              |     `en`     | `fr`          |
+| `hide_title`  | Hide the card title        |   `false`    | `true`        |
+| `hide_border` | Hide the card border       |   `false`    | `true`        |
 
 Boolean parameters accept `true`, `false`, `1`, or `0`.
 
