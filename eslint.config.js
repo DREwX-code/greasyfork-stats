@@ -10,6 +10,7 @@ export default [
   {
     files: [
       "api/**/*.js",
+      "scripts/**/*.js",
       "lib/**/*.js",
       "test/**/*.js",
       "eslint.config.js",
@@ -22,13 +23,13 @@ export default [
     },
   },
   {
-    files: ["index.html"],
+    files: ["index.html", "assets/**/*.js"],
     plugins: {
       html,
     },
     languageOptions: {
       ecmaVersion: "latest",
-      sourceType: "script",
+      sourceType: "module",
       globals: globals.browser,
     },
   },

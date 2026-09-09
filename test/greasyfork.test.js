@@ -68,12 +68,14 @@ test("getUserStats filters invalid scripts and aggregates string and numeric fie
   });
 });
 
-test("getUserStats maps an empty public script list to 404", async (t) => {
+test("getUserStats returns zero statistics for an existing profile without scripts", async (t) => {
   t.mock.method(globalThis, "fetch", async () =>
     response({ json: { scripts: [] } }),
   );
 
-  await expectStatus(() => getUserStats("Alice"), 404);
+  const stats = await getUserStats("Alice");
+  assert.equal(stats.scriptCount, 0);
+  assert.equal(stats.totalInstalls, 0);
 });
 
 test("getUserStats preserves upstream 404 and 429 statuses", async (t) => {
@@ -111,4 +113,24 @@ test("getUserStats maps network failures to 502", async (t) => {
   });
 
   await expectStatus(() => getUserStats("Alice"), 502);
+});
+
+test("the request timeout also covers a stalled response body", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  t.mock.method(globalThis, "fetch", async (_url, { signal }) => ({
+    ...response(),
+    json: () =>
+      new Promise((_resolve, reject) => {
+        signal.addEventListener(
+          "abort",
+          () => reject(new DOMException("Aborted", "AbortError")),
+          { once: true },
+        );
+      }),
+  }));
+  const result = getUserStats("1259433");
+  await Promise.resolve();
+  const rejected = expectStatus(() => result, 504);
+  t.mock.timers.tick(8000);
+  await rejected;
 });

@@ -8,9 +8,9 @@
     "node": "^24.8.0"
   },
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "node --watch scripts/dev.js",
     "lint:js": "eslint . --max-warnings 0",
-    "lint:css": "stylelint index.html --max-warnings 0",
+    "lint:css": "stylelint assets/*.css --max-warnings 0",
     "lint:html": "html-validate index.html --max-warnings 0",
     "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
     "format": "prettier --write .",

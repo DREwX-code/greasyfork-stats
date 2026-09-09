@@ -27,7 +27,12 @@ export default async function handler(req, res) {
     res
       .status(400)
       .send(
-        renderErrorCard("Missing parameter: ?user=<greasyfork-user-id>", theme),
+        req.method === "HEAD"
+          ? ""
+          : renderErrorCard(
+              "Missing parameter: ?user=<greasyfork-user-id>",
+              theme,
+            ),
       );
     return;
   }
@@ -40,6 +45,7 @@ export default async function handler(req, res) {
       lang,
       hideTitle,
       hideBorder,
+      layout: getQueryValue(req.query.layout),
     });
 
     res.setHeader(

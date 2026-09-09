@@ -111,3 +111,43 @@ test("handler maps upstream not-found results to a five-minute cache", async (t)
     "public, max-age=300, s-maxage=300",
   );
 });
+
+test("API and preview render the same card with grid and display options", async (t) => {
+  const { aggregateUserStats } = await import("../lib/stats.js");
+  const { renderStatsCard } = await import("../lib/card.js");
+  t.mock.method(globalThis, "fetch", async () =>
+    response({ json: successfulPayload() }),
+  );
+  const res = createResponse();
+  await handler(
+    {
+      method: "GET",
+      query: {
+        user: "1259433",
+        layout: "grid",
+        lang: "fr",
+        theme: "nord",
+        hide_title: "1",
+        hide_border: "true",
+      },
+    },
+    res,
+  );
+  assert.equal(
+    res.body,
+    renderStatsCard(aggregateUserStats(successfulPayload()), {
+      layout: "grid",
+      lang: "fr",
+      theme: "nord",
+      hideTitle: true,
+      hideBorder: true,
+    }),
+  );
+});
+
+test("missing-user HEAD errors also omit the response body", async () => {
+  const res = createResponse();
+  await handler({ method: "HEAD", query: {} }, res);
+  assert.equal(res.statusCode, 400);
+  assert.equal(res.body, "");
+});
