@@ -83,8 +83,22 @@
             aria-label="Interface language"
             data-i18n-aria="interfaceLanguage"
           >
-            <option value="en">EN</option>
-            <option value="fr">FR</option>
+            <option value="fr">Français</option>
+            <option value="en" selected>English</option>
+            <option value="es">Español</option>
+            <option value="pt">Português</option>
+            <option value="zh">中文</option>
+            <option value="hi">हिन्दी</option>
+            <option value="de">Deutsch</option>
+            <option value="it">Italiano</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="nl">Nederlands</option>
+            <option value="pl">Polski</option>
+            <option value="ru">Русский</option>
+            <option value="tr">Türkçe</option>
+            <option value="uk">Українська</option>
+            <option value="id">Bahasa Indonesia</option>
           </select>
 
           <a
@@ -113,12 +127,36 @@
           </p>
         </section>
 
+        <section class="theme-gallery" aria-labelledby="galleryTitle">
+          <div class="gallery-heading">
+            <div>
+              <h2 id="galleryTitle" data-i18n="galleryTitle">Explore themes</h2>
+              <p id="galleryNote" data-i18n="gallerySample">
+                Example data · select a theme
+              </p>
+            </div>
+            <div class="gallery-actions">
+              <a class="gallery-edit" href="#settings" data-i18n="edit">Edit</a>
+            </div>
+          </div>
+          <div class="gallery-viewport">
+            <div
+              class="gallery-scroll"
+              role="group"
+              aria-labelledby="galleryTitle"
+              tabindex="0"
+            >
+              <div id="themeGallery" class="gallery-track"></div>
+            </div>
+          </div>
+        </section>
+
         <section
           class="app"
           aria-label="GreasyFork card builder"
           data-i18n-aria="builder"
         >
-          <aside class="settings">
+          <aside class="settings" id="settings" tabindex="-1">
             <h2 class="section-title" data-i18n="settings">Settings</h2>
             <p class="section-subtitle" data-i18n="settingsHelp">
               Customize the content and appearance.
@@ -177,7 +215,19 @@
                     <option value="en">English</option>
                     <option value="fr">Français</option>
                     <option value="es">Español</option>
+                    <option value="pt">Português</option>
+                    <option value="zh">中文</option>
+                    <option value="hi">हिन्दी</option>
                     <option value="de">Deutsch</option>
+                    <option value="it">Italiano</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="nl">Nederlands</option>
+                    <option value="pl">Polski</option>
+                    <option value="ru">Русский</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="uk">Українська</option>
+                    <option value="id">Bahasa Indonesia</option>
                   </select>
                 </div>
               </div>
@@ -215,7 +265,9 @@
           <div class="workspace">
             <div class="preview">
               <div>
-                <div id="preview-stage" aria-live="polite"></div>
+                <div class="preview-frame">
+                  <div id="preview-stage" aria-live="polite"></div>
+                </div>
                 <button
                   id="retryButton"
                   class="action-button"
@@ -370,6 +422,13 @@
             target="_blank"
             rel="noreferrer"
             >Documentation</a
+          >
+          <a
+            href="https://github.com/DREwX-code/greasyfork-stats#development"
+            target="_blank"
+            rel="noreferrer"
+            data-i18n="contributing"
+            >Contributing</a
           >
           <a
             href="https://github.com/DREwX-code/greasyfork-stats/blob/main/LICENSE"

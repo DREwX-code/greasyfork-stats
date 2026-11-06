@@ -48,6 +48,7 @@ async function builder() {
     languageMenu: ["en", "fr"],
     cardThemeMenu: Object.keys(themes),
     cardLanguageMenu: Object.keys(translations),
+    layoutMenu: ["compact", "grid"],
   })) {
     get(`#${id}`).options = values.map((value) => ({
       value,
@@ -158,4 +159,49 @@ test("failed profile requests keep export unavailable and expose retry", async (
   await app.success(2, "Recovered");
   assert.equal(app.get("#copyButton").disabled, false);
   assert.match(app.get("#userStatus").textContent, /Recovered/);
+});
+
+test("dragging the gallery moves the loop and suppresses the resulting click", async () => {
+  const app = await builder();
+  const track = app.get("#themeGallery");
+  const scroll = app.get(".gallery-scroll");
+  const animation = {
+    animationName: "gallery-drift",
+    currentTime: 89000,
+    effect: { getTiming: () => ({ duration: 90000 }) },
+  };
+  track.getAnimations = () => [animation];
+  track.scrollWidth = 2000;
+  scroll.setPointerCapture = () => {};
+  scroll.hasPointerCapture = () => true;
+  scroll.releasePointerCapture = () => {};
+  const pointer = {
+    isPrimary: true,
+    button: 0,
+    pointerId: 1,
+    clientX: 0,
+    clientY: 0,
+  };
+  scroll.listeners.pointerdown(pointer);
+  scroll.listeners.pointermove({ ...pointer, clientX: 100 });
+  assert.equal(animation.currentTime, 8000);
+  scroll.listeners.pointerup(pointer);
+  let prevented = false;
+  scroll.listeners.click({
+    preventDefault() {
+      prevented = true;
+    },
+    stopPropagation() {},
+  });
+  assert.equal(prevented, true);
+});
+
+test("changing the layout updates the card and export", async () => {
+  const app = await builder();
+  await app.success(0, "Alice");
+  const layout = app.get("#layoutMenu");
+  layout.value = "grid";
+  layout.listeners.change();
+  assert.match(app.get("#code-output").textContent, /layout=grid/);
+  assert.match(app.get("#preview-stage").innerHTML, /M210/);
 });

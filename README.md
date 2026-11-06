@@ -97,14 +97,26 @@ Example:
 
 ## Languages
 
-Available languages:
+The interface and generated cards support 16 languages. Use the language code in the `lang` parameter to choose a card language:
 
-```text
-en
-fr
-es
-de
-```
+| Code | Language         |
+| ---- | ---------------- |
+| `en` | English          |
+| `fr` | Français         |
+| `es` | Español          |
+| `pt` | Português        |
+| `zh` | 中文             |
+| `hi` | हिन्दी           |
+| `de` | Deutsch          |
+| `it` | Italiano         |
+| `ja` | 日本語           |
+| `ko` | 한국어           |
+| `nl` | Nederlands       |
+| `pl` | Polski           |
+| `ru` | Русский          |
+| `tr` | Türkçe           |
+| `uk` | Українська       |
+| `id` | Bahasa Indonesia |
 
 Example:
 
